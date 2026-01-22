@@ -1,0 +1,26 @@
+[project]
+name = "fb-outreach"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "abdulrafay85", email = "rafaykhank982@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "apify-client>=2.3.0",
+    "fastapi",
+    "openai-agents>=0.6.5",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+    "resend>=2.19.0",
+    "uvicorn",
+]
+
+[project.scripts]
+fb-outreach = "fb_outreach:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

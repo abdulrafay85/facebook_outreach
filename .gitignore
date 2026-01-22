@@ -1,0 +1,24 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+fb_outreach.db
+memory_store.pkl
+.env
+pipeline_report.json
+test_space_check.txt
+pipeline.py
+changes.py
+email_send.py
+main.ipynb
+verify_persistence.py
+implementation_plan.md
+task.md
+walkthrough.md
+/frontend
