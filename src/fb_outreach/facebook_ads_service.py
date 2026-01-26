@@ -2,7 +2,7 @@ import os
 import requests
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, Field
-from schemas import AdsRequest, AdsResponse, Paging
+from fb_outreach.schemas import AdsRequest, AdsResponse, Paging
 from time import sleep
 import logging
 

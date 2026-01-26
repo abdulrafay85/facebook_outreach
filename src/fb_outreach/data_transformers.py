@@ -3,7 +3,7 @@ Data transformation utilities for the outreach pipeline.
 """
 
 from typing import Dict, Any, Optional, Tuple
-from .schemas import ProspectContext, ApifyFacebookPageData, FacebookAdData
+from fb_outreach.schemas import ProspectContext, ApifyFacebookPageData, FacebookAdData
 
 
 def transform_to_prospect_context(

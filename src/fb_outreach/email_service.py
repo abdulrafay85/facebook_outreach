@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 # ----- Load environment variables -----
 load_dotenv(find_dotenv())
+
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 if not RESEND_API_KEY:
     raise RuntimeError("RESEND_API_KEY is not set")

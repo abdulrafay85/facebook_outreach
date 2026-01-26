@@ -1,9 +1,9 @@
 # fb_outreach/pipeline/prospect_builder.py
 
 from typing import List, Dict
-from .custom_memory_session import memory
-from .schemas import ApifyFacebookPageData, FacebookAdData, ProspectContext
-from .data_transformers import transform_to_prospect_context
+from fb_outreach.custom_memory_session import memory
+from fb_outreach.schemas import ApifyFacebookPageData, FacebookAdData, ProspectContext
+from fb_outreach.data_transformers import transform_to_prospect_context
 
 
 def get_pages_and_ads(user_id: str):

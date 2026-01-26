@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 from dataclasses import dataclass, field
 from typing import Any, List, Optional, Dict
-from schemas import ApifyFacebookPageData, FacebookAdsResponse, FacebookAdData, FacebookAdsPaging
+from fb_outreach.schemas import ApifyFacebookPageData, FacebookAdsResponse, FacebookAdData, FacebookAdsPaging
 
 # -------------------------------------------------------------------------
 # Custom Memory Implementation (Provided by User)

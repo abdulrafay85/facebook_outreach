@@ -1,19 +1,18 @@
 from fastapi import APIRouter, HTTPException
-from custom_memory_session import memory
+from fb_outreach.custom_memory_session import memory, PipelineContext
 from typing import List, Annotated
-from facebook_ads_service import FacebookAdsService
-from apify_service import ApifyService
+from fb_outreach.facebook_ads_service import FacebookAdsService
+from fb_outreach.apify_service import ApifyService
 from fastapi import Query
-from schemas import AdsRequest, AdsResponse, Paging
+from fb_outreach.schemas import AdsRequest, AdsResponse, Paging
 from dotenv import load_dotenv
-from schemas import (
+from fb_outreach.schemas import (
     ApifyFacebookPageData,
     FacebookAdsResponse,
     FacebookAdData,
 )
 import os
-from custom_memory_session import memory, PipelineContext
-from outreach_pipeline import pipeline_run
+from fb_outreach.outreach_pipeline import pipeline_run
 
 load_dotenv()
 
