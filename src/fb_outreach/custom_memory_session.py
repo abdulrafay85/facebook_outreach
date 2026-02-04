@@ -20,7 +20,9 @@ class BufferItem:
 @dataclass
 class ShortTermMemory:
     buffer: List[BufferItem] = field(default_factory=list)
-    storage_file: str = "memory_store.pkl"
+    # storage_file: str = "memory_store.pkl"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    storage_file = os.path.join(base_dir, "memory_store.pkl")
 
     def __post_init__(self):
         self._load_from_disk()
@@ -31,9 +33,9 @@ class ShortTermMemory:
                 import pickle
                 with open(self.storage_file, "rb") as f:
                     self.buffer = pickle.load(f)
-                print(f"Loaded {len(self.buffer)} items from {self.storage_file}")
+                # print(f"Loaded {len(self.buffer)} items from {self.storage_file}")
             except Exception as e:
-                print(f"Failed to load memory: {e}")
+                # print(f"Failed to load memory: {e}")
 
     def _save_to_disk(self):
         try:
@@ -81,7 +83,6 @@ class LogLevel(str, enum.Enum):
 # -------------------------------------------------------------------------
 # Data Models (In-Memory Dataclasses)
 # -------------------------------------------------------------------------
-
 @dataclass
 class PipelineSessionModel:
     """Tracks a single execution run of the pipeline."""
@@ -198,7 +199,7 @@ class PipelineContext:
 
     async def log_step(self, step_name: str, status: str, message: str = "", details: Dict = None):
         """Logs a specific step execution to memory."""
-        print(f"[{datetime.now()}] [{self.session_id}] [{step_name}] {status.upper()}: {message}")
+        # print(f"[{datetime.now()}] [{self.session_id}] [{step_name}] {status.upper()}: {message}")
         
         log_entry = PipelineLogModel(
             session_id=self.session_id,
@@ -219,28 +220,28 @@ class PipelineContext:
         
         # print(f"ad_data_type: {type(ad_data)} ad_data: {ad_data}")
         # ads_data = ad_data.get("data", [{}])
-        print(f"ads_data_type: {type(ad_data)} :::: ads_data: {ad_data}")
+        # print(f"ads_data_type before for loop: {type(ad_data)} :::: ads_data: {ad_data}")
         # for data in ad_data:
-        #     print(f"data_type: {type(data)} data: {data}")
+        # print(f"data_type in for loop: {type(data)} data: {data}")
         ad_record = FacebookAdsResponse(
                 ads = [FacebookAdData(
-                    session_id=self.session_id,
-                    ad_id=ad_data.get("id"),
-                    page_id=ad_data.get("page_id"),
-                    page_name=ad_data.get("page_name"),
-                    creative_bodies=[ad_data.get("ad_creative_bodies")],
-                    link_titles=[ad_data.get("ad_creative_link_titles")],
-                    link_descriptions=[ad_data.get("ad_creative_link_descriptions")],
-                    link_captions=[ad_data.get("ad_creative_link_captions")],
-                    ad_snapshot_url=ad_data.get("ad_snapshot_url"),
-                    raw_data=ad_data
+                        session_id=self.session_id,
+                        ad_id=ad_data.get("id"),
+                        page_id=ad_data.get("page_id"),
+                        page_name=ad_data.get("page_name"),
+                        creative_bodies=[ad_data.get("ad_creative_bodies")],
+                        link_titles=[ad_data.get("ad_creative_link_titles")],
+                        link_descriptions=[ad_data.get("ad_creative_link_descriptions")],
+                        link_captions=[ad_data.get("ad_creative_link_captions")],
+                        ad_snapshot_url=ad_data.get("ad_snapshot_url"),
+                        raw_data=ad_data
                 )],
-                paging=FacebookAdsPaging(
-                    after_cursor=ad_data.get("cursor_after"),
-                    next_url=ad_data.get("next_url")
-                )
+                # paging=FacebookAdsPaging(
+                #     after_cursor=data.get("cursor_after"),
+                #     next_url=data.get("next_url")
+                # )
             ) 
-        print(f"ad_record: {ad_record}")
+        # print(f"ad_record: {ad_record}")
         memory.add_memory(
             data=ad_record,
             user_id=self.user_id,

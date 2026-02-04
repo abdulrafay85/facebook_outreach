@@ -176,7 +176,7 @@ class UserData:
     likes: int = 0
     address: str = ""
 
-def pitch_prompt(ctx: RunContextWrapper, agent: Agent) -> str:
+def pitch_prompt(ctx: RunContextWrapper, agent: Agent | None = None) -> str:
         """
         Compose the prompt for pitch generation.
         """
@@ -236,7 +236,7 @@ class PitchService:
 
         # Initialize model
         self.model = OpenAIChatCompletionsModel(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash",
             openai_client=self.client
         )
 
@@ -260,16 +260,18 @@ class PitchService:
         )
 
 
-    def generate_pitch(self, *, user_input: str, context: UserData) -> str:
+    async def generate_pitch(self, *, user_input: str, context: UserData) -> str:
         """
         Generate pitch for a single prospect.
         """
-        ctx = RunContextWrapper(context=context)
-        result = Runner.run_sync(
-            starting_agent=self.pitch_agent,
-            input="Generate and send pitch email",
+        # ctx = RunContextWrapper(context=context)
+        print(f"context: {context}")
+        
+        result = await Runner.run(
+            self.pitch_agent,
+            input=user_input,
             run_config=self.config,
-            context=ctx
+            context=context
         )
         return result.final_output
 

@@ -9,8 +9,10 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "apify-client>=2.3.0",
+    "bcrypt==3.2.2",
     "fastapi",
     "openai-agents>=0.6.5",
+    "passlib>=1.7.4",
     "pydantic>=2.12.5",
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",

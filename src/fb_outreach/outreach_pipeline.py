@@ -1,4 +1,5 @@
 import asyncio
+from fb_outreach.agent import pitch_prompt, PitchService, UserData
 import os
 from typing import Dict, Any
 from datetime import datetime
@@ -18,6 +19,7 @@ async def process_ad(idx: int, ad: Dict, results: Dict, ctx: PipelineContext):
     page_id = ad.get("page_id")
     print(f"Processing ad {idx} with page_id={page_id}")
     await ctx.save_ad(ad)
+    print("ad saved")
     print(f"ad: {ad}")
     if not page_id:
         await ctx.log_step(
@@ -69,25 +71,10 @@ async def process_ad(idx: int, ad: Dict, results: Dict, ctx: PipelineContext):
         )
         results["skipped"] += 1
         return
-    # print(f"Saving page {apify_item}")
+    print(f"Saving page {apify_item}")
     await ctx.save_page(apify_item)
     print(f"Page saved")
 
-    # email = apify_item.get("email")
-    # page_name = apify_item.get("pageName")
-
-    # print(f"Email: {email}")
-    # print(f"Page name: {page_name}")
-
-    # if not email or "@" not in email:
-    #     await ctx.log_step(
-    #         "invalid_email",
-    #         "skipped",
-    #         f"Invalid/missing email for page_id={page_id}",
-    #     )
-    #     results["skipped"] += 1
-    #     return
-    
     # # -------------------------------
     # # BUILD PROSPECT CONTEXTS
     # # -------------------------------
@@ -124,7 +111,6 @@ async def process_ad(idx: int, ad: Dict, results: Dict, ctx: PipelineContext):
     #         details={"error": str(e)},
     #     )
     #     results["failed"] += 1
-
 
 # ------------------------------------------------------------------
 # Main Pipeline
@@ -166,7 +152,7 @@ async def pipeline_run(user_id: str = "default_user") -> Dict:
                 "completed",
                 "No ads found",
             )
-            return {"total": 0}
+            # return {"total": 0}
 
         await ctx.log_step(
             "ads_fetched",
@@ -195,9 +181,9 @@ async def pipeline_run(user_id: str = "default_user") -> Dict:
         # --------------------------------
         print(f"user_id:  {user_id}")
 
-        items = memory.get_memory(user_id)
+        # items = memory.get_memory(user_id)
 
-        print(f"stored_data: {items}")
+        # print(f"stored_data: {items}")
 
         prospects = build_prospects(user_id)
 
@@ -209,7 +195,7 @@ async def pipeline_run(user_id: str = "default_user") -> Dict:
                 "failed",
                 "No prospects found",
             )
-            return {"total": 0}
+            # return {"total": 0}
 
         await ctx.log_step(
             "prospects_built",
@@ -221,11 +207,10 @@ async def pipeline_run(user_id: str = "default_user") -> Dict:
         # GENERATE PITCHES
         # --------------------------------
         print(f"Generating pitches for {len(prospects)} prospects")
-        pitch_service = PitchService(api_key=os.getenv("GEMINI_API_KEY"))
-        print(f"Pitch service: {pitch_service}")
+
         for prospect in prospects:
             try:
-                print(f"Generating pitch for {prospect.page_name}")
+                # print(f"Generating pitch for {prospect.page_name}")
                 pitch = pitch_service.generate_pitch(
                     user_input="Generate and send pitch email",
                     context=prospect,
@@ -237,8 +222,9 @@ async def pipeline_run(user_id: str = "default_user") -> Dict:
                     email=prospect.email,
                     content=pitch
                 )
-                print(f"Pitch saved for {prospect.page_name}")
 
+                print(f"Pitch saved for {prospect.page_name}")
+                
                 await ctx.log_step(
                     "pitch_generated",
                     "success",

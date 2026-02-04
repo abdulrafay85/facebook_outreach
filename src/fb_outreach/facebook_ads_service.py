@@ -7,11 +7,11 @@ from time import sleep
 import logging
 
 
-# ----- Logging setup -----
+# -------------------- Logging setup --------------------
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
 logger = logging.getLogger(__name__)
 
-# ----- Facebook Ads Service -----
+# -------------------- Facebook Ads Service --------------------
 class FacebookAdsService:
     FB_API_BASE = "https://graph.facebook.com/v23.0/ads_archive"
 
@@ -35,7 +35,7 @@ class FacebookAdsService:
 
         print(f"req.search_terms: {req.search_terms}")
         
-        # --- search_terms ---
+        # --------------------search_terms --------------------
         if isinstance(req.search_terms, list):
             # list of dicts or list of strings
             search_terms_list = [
@@ -51,7 +51,7 @@ class FacebookAdsService:
         print(f"search_terms_list: {search_terms_list}")
 
         print(f"req.ad_reached_countries: {req.ad_reached_countries}")        
-        # --- ad_reached_countries ---
+        # -------------------- ad_reached_countries --------------------
         if isinstance(req.ad_reached_countries, list):
             countries_list = [
                 item["value"] if isinstance(item, dict) else item
