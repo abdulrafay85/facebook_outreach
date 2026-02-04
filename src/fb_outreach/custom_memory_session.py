@@ -35,7 +35,7 @@ class ShortTermMemory:
                     self.buffer = pickle.load(f)
                 # print(f"Loaded {len(self.buffer)} items from {self.storage_file}")
             except Exception as e:
-                # print(f"Failed to load memory: {e}")
+                print(f"Failed to load memory: {e}")
 
     def _save_to_disk(self):
         try:
