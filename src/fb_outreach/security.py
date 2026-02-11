@@ -10,6 +10,22 @@ except AttributeError:
         __version__ = bcrypt.__version__
     bcrypt.__about__ = About()
 
+# Patch bcrypt.hashpw and checkpw to truncate password to 72 bytes
+# distinct behavior in bcrypt > 4.0.0 causes passlib to crash
+_orig_hashpw = bcrypt.hashpw
+def _patched_hashpw(password, salt):
+    if isinstance(password, bytes) and len(password) > 72:
+        password = password[:72]
+    return _orig_hashpw(password, salt)
+bcrypt.hashpw = _patched_hashpw
+
+_orig_checkpw = bcrypt.checkpw
+def _patched_checkpw(password, hashed_password):
+    if isinstance(password, bytes) and len(password) > 72:
+        password = password[:72]
+    return _orig_checkpw(password, hashed_password)
+bcrypt.checkpw = _patched_checkpw
+
 from passlib.context import CryptContext
 import uuid
 import time
@@ -76,7 +92,7 @@ def verify_manual_token(token: str) -> dict:
 def get_current_user(request: Request):
     token = request.cookies.get("access_token")
 
-    if not token:
+    if not token:a
         raise HTTPException(status_code=401, detail="Not authenticated")
 
     return token

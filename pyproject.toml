@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "abdulrafay85", email = "rafaykhank982@gmail.com" }
 ]
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.11,<3.14"
 
 dependencies = [
     "apify-client>=2.3.0",
