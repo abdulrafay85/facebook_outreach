@@ -13,6 +13,7 @@ memory_store.pkl
 .env
 .env.*
 *.pkl
+demo_pyproject.toml
 pipeline_report.json
 test_space_check.txt
 pipeline.py
