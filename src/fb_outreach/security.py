@@ -1,5 +1,15 @@
 
 from fastapi import Request, HTTPException, Depends
+import bcrypt
+
+# Monkeypatch bcrypt to work with passlib 1.7.4
+try:
+    bcrypt.__about__
+except AttributeError:
+    class About:
+        __version__ = bcrypt.__version__
+    bcrypt.__about__ = About()
+
 from passlib.context import CryptContext
 import uuid
 import time

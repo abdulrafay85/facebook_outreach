@@ -10,7 +10,7 @@ requires-python = ">=3.11,<3.13"
 
 dependencies = [
     "apify-client>=2.3.0",
-    "bcrypt==3.2.2",
+    "bcrypt>=4.0.1",
     "fastapi",
     "openai-agents>=0.6.5",
     "passlib[bcrypt]>=1.7.4",
