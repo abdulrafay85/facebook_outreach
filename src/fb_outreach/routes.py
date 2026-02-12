@@ -35,7 +35,7 @@ router = APIRouter()
 ## ------------------------------------
 
 # Pydantic models for signup
-class UserSignup(BaseModel):
+class UserSignup(BaseModel): 
     email: str
     password: str
 
@@ -84,7 +84,8 @@ async def login(user: UserLogin):
                 key="access_token",
                     value=token,
                     httponly=True,
-                    secure=True,
+                    secure=False,
+                    # secure=True,
                     samesite="none",
                     max_age=60 * 60 * 24,
                     path="/"
