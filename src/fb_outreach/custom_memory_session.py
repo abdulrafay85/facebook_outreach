@@ -260,6 +260,7 @@ class PipelineContext:
             raise TypeError(f"Invalid page_data type: {type(page_data)}")
 
         for item in page_items:
+            print(f"item: {item}")
             rating_raw = item.get("rating")
 
             rating_text = None

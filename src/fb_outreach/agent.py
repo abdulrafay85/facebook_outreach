@@ -219,60 +219,106 @@ def pitch_prompt(ctx: RunContextWrapper, agent: Agent | None = None) -> str:
         """
         return prompt
 
+
+# # ------------------------------------------- 
+# # version 1
+# # ------------------------------------------- 
+# class PitchService:
+#     def __init__(self, api_key: str = None, instructions: str | Callable[[RunContextWrapper, Agent], str] = None):
+#         """
+#         Initialize the Pitch Agent service with the LLM client and model.
+#         """
+#         self.api_key = api_key
+#         if not self.api_key:
+#             raise ValueError("GEMINI_API_KEY not set")
+
+#         # Initialize external client
+#         self.client = AsyncOpenAI(
+#             api_key=self.api_key,
+#             base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+#         )
+
+#         # Initialize model
+#         self.model = OpenAIChatCompletionsModel(
+#             model="gemini-2.5-flash",
+#             openai_client=self.client
+#         )
+
+#         # Run config
+#         self.config = RunConfig(
+#             model=self.model,
+#             model_provider=self.client
+#         )
+
+#         # Pitch prompt
+#         self.instructions = instructions
+
+#         # Set defaults for agents
+#         set_default_openai_client(self.client)
+#         set_tracing_disabled(True)
+
+#         # Initialize agent
+#         self.pitch_agent = Agent(
+#             name="Pitch Agent",
+#             instructions=self.instructions
+#         )
+
+
+#     async def generate_pitch(self, *, user_input: str, context: UserData) -> str:
+        
+#         """
+#         Generate pitch for a single prospect.
+#         """
+#         # ctx = RunContextWrapper(context=context)
+#         print(f"context: {context}")
+        
+#         result = await Runner.run(
+#             self.pitch_agent,
+#             input=user_input,
+#             run_config=self.config,
+#             context=context
+#         )
+#         return result.final_output
+
+
+# ----------------------------
+# version 2
+# ----------------------------
 class PitchService:
-    def __init__(self, api_key: str = None, instructions: str | Callable[[RunContextWrapper, Agent], str] = None):
+    def __init__(
+        self, 
+        pitch_agent: Agent,
+        run_config: RunConfig
+    ):
         """
-        Initialize the Pitch Agent service with the LLM client and model.
+        Initialize PitchService with external agent and config.
         """
-        self.api_key = api_key
-        if not self.api_key:
-            raise ValueError("GEMINI_API_KEY not set")
-
-        # Initialize external client
-        self.client = AsyncOpenAI(
-            api_key=self.api_key,
-            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-        )
-
-        # Initialize model
-        self.model = OpenAIChatCompletionsModel(
-            model="gemini-2.5-flash",
-            openai_client=self.client
-        )
-
-        # Run config
-        self.config = RunConfig(
-            model=self.model,
-            model_provider=self.client
-        )
-
-        # Pitch prompt
-        self.instructions = instructions
-
-        # Set defaults for agents
-        set_default_openai_client(self.client)
-        set_tracing_disabled(True)
-
-        # Initialize agent
-        self.pitch_agent = Agent(
-            name="Pitch Agent",
-            instructions=self.instructions
-        )
-
+        self.pitch_agent = pitch_agent
+        self.config = run_config
 
     async def generate_pitch(self, *, user_input: str, context: UserData) -> str:
         """
         Generate pitch for a single prospect.
         """
-        # ctx = RunContextWrapper(context=context)
         print(f"context: {context}")
-        
-        result = await Runner.run(
-            self.pitch_agent,
-            input=user_input,
-            run_config=self.config,
-            context=context
-        )
-        return result.final_output
+        try:    
+            result = await Runner.run(
+                self.pitch_agent,
+                input=user_input,
+                run_config=self.config,
+                context=context
+            )
+            return result.final_output
+        except Exception as e:
+            print(f"Error generating pitch: {e}")
+            return ""
 
 
+# # New AI client aur model bana lo
+# client = AsyncOpenAI(api_key="YOUR_KEY", base_url="...")
+# model = OpenAIChatCompletionsModel(model="new-model", openai_client=client)
+# config = RunConfig(model=model, model_provider=client)
+# agent = Agent(name="Pitch Agent", instructions="Your instructions")
+
+# # PitchService ko inject kar do
+# pitch_service = PitchService(pitch_agent=agent, run_config=config)

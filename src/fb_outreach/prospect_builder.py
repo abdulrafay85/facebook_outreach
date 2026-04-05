@@ -108,11 +108,16 @@ def get_pages_and_ads(user_id: str):
         if isinstance(item.data, FacebookAdsResponse)
     ]
 
+    print("**************************************")
+    print(f"pages_data: {pages}")
+    print("**************************************")
+    print(f"ads_data: {ads}")
+    print("**************************************")
+
     return {
         "pages": pages,
         "ads": ads,
     }
-
 
 def match_ads_by_page_id(
     ads: List[FacebookAdsResponse],
@@ -135,12 +140,70 @@ def match_ads_by_page_id(
     print(f"ad_map keys: {ad_map.keys()}")
     return ad_map
 
+# # vrsion 1
+# def build_prospects(user_id: str) -> List[ProspectContext]:
+#     print("Building prospects...")
 
-def build_prospects(user_id: str) -> List[ProspectContext]:
+#     data = get_pages_and_ads(user_id)
+#     ad_map = match_ads_by_page_id(data["ads"])
+
+#     print(f"ad_map: {ad_map}")
+
+#     # deduplicate pages by page_id
+#     unique_pages: Dict[str, ApifyFacebookPageData] = {
+#         page.raw_data["pageAdLibrary"]["id"]: page for page in data["pages"]
+#         if page.raw_data["pageAdLibrary"]["id"]
+#     }
+
+#     print(f"unique_pages: {unique_pages}")
+
+#     prospects: List[ProspectContext] = []
+
+#     print("-----------------------------")
+#     for page_id, page in unique_pages.items():
+#         print(f"Processing page_id: {page_id}")
+
+#         matched_ads = ad_map.get(page_id, [])
+#         print(f"matched_ads: {matched_ads}")
+#         print("=============================================")
+
+#         if not matched_ads:
+#             print(f"No ads found for page_id: {page_id}")
+#             continue
+
+#         # ✅ ek page ke multiple ads → multiple prospects
+#         for ad in matched_ads:
+#             print(f"inside_loop_ad: {ad}")
+#             prospect = transform_to_prospect_context(
+#                 page=page,
+#                 ad=ad,
+#                 fallback_email=None,
+#             )
+#             print(f"prospect: {prospect}")
+
+#             if prospect.is_valid_for_outreach():
+#                 prospects.append(prospect)
+      
+#     print(f"Total prospects built: {len(prospects)}")
+#     return prospects
+
+
+# version 2
+from typing import List, Dict, Tuple
+
+def build_prospects(user_id: str) -> Tuple[List[ProspectContext], List[Dict]]:
+    """
+    Build prospects only for pages that have a valid email.
+    Returns:
+        - List of valid prospects
+        - List of pages missing email
+    """
     print("Building prospects...")
 
     data = get_pages_and_ads(user_id)
     ad_map = match_ads_by_page_id(data["ads"])
+
+    print(f"ad_map: {ad_map}")
 
     # deduplicate pages by page_id
     unique_pages: Dict[str, ApifyFacebookPageData] = {
@@ -151,27 +214,39 @@ def build_prospects(user_id: str) -> List[ProspectContext]:
     print(f"unique_pages: {unique_pages}")
 
     prospects: List[ProspectContext] = []
+    missing_email_pages: List[Dict] = []
 
     print("-----------------------------")
     for page_id, page in unique_pages.items():
         print(f"Processing page_id: {page_id}")
 
         matched_ads = ad_map.get(page_id, [])
+        print(f"matched_ads: {matched_ads}")
+        print("=============================================")
 
         if not matched_ads:
             print(f"No ads found for page_id: {page_id}")
             continue
 
-        # ✅ ek page ke multiple ads → multiple prospects
         for ad in matched_ads:
+            print(f"inside_loop_ad: {ad}")
             prospect = transform_to_prospect_context(
                 page=page,
                 ad=ad,
                 fallback_email=None,
             )
+            print(f"prospect: {prospect}")
 
+            # ✅ Only keep prospects with valid email
             if prospect.is_valid_for_outreach():
                 prospects.append(prospect)
+            else:
+                missing_email_pages.append({
+                    "page_id": page_id,
+                    "page_name": page.page_name
+                })
 
     print(f"Total prospects built: {len(prospects)}")
-    return prospects
+    print(f"Pages missing email: {len(missing_email_pages)}")
+
+    return prospects, missing_email_pages

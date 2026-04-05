@@ -411,20 +411,20 @@ async def fetch_pages(user_id: str = Depends(get_current_user_id)):
         return pages
 
 # -----------------------------
-# @router.post("/pipeline/run")
-# async def run_pipeline(req: PipelineRunRequest):
-#     """
-#     Trigger pipeline execution using form/JSON input
-#     """
-#     try:
-#         result = await pipeline_run(user_id=req.user_id)
-#         return PipelineRunResponse(**result)
+@router.post("/pipeline/run")
+async def run_pipeline(req: PipelineRunRequest):
+    """
+    Trigger pipeline execution using form/JSON input
+    """
+    try:
+        result = await pipeline_run(user_id=req.user_id)
+        return PipelineRunResponse(**result)
 
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=500,
-#             detail=f"Pipeline execution failed: {str(e)}"
-#         )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Pipeline execution failed: {str(e)}"
+        )
 
 # ---- Static keyword source (Page Categories + Interests) ----
 # KEYWORDS = [
